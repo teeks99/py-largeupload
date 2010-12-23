@@ -1,5 +1,5 @@
 
-import json, os, hashlib, urllib2
+import json, os, hashlib, urllib2, sys
 
 class File:
 	def __init__(self):
@@ -24,6 +24,8 @@ class File:
 
 		self.status = "CONTACTING_SERVER"
 		response = urllib2.urlopen(self.url_base + self.prefix + 'startUpload.py', data)
+		print response
+		sys.stdout.flush()
 		self.status = "PROCESSING_RESPONSE"
 		if not self.unpackJsResponse(response):
 			pass #TODO: Throw exception
