@@ -1,6 +1,8 @@
 
 import json, os, hashlib, urllib2, sys
 
+verbose = True
+
 class File:
 	def __init__(self):
 		self.status = "NOT_STARTED"
@@ -24,10 +26,8 @@ class File:
 
 		self.status = "CONTACTING_SERVER"
 		response = urllib2.urlopen(self.url_base + self.prefix + 'startUpload.py', data)
-		resp = response.read()
-		print resp
 		self.status = "PROCESSING_RESPONSE"
-		if not self.unpackJsResponse(resp):
+		if not self.unpackJsResponse(response.read()):
 			pass #TODO: Throw exception
 
 		self.status = "UPLOADING"
@@ -37,8 +37,10 @@ class File:
 			while True:
 				try_counter = try_counter + 1
 				response = urllib2.urlopen(self.url_base + self.prefix + 'chunkUpload.py', data)
-				if self.unpackChunkResponse(response) or (try_counter > 10):
+				if self.unpackChunkResponse(response.read()) or (try_counter > 10):
 					break # this is a python do-while loop equliavan
+			if verbose:
+				print "Chunk " + str(c) " uploaded"
 
 	def createJsStart(self):
 		data = {}
