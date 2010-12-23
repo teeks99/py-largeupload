@@ -18,7 +18,7 @@ def start_upload():
 
 	file_info = json.loads(post_data)
 
-	uploadId = hashlib.sha256(file_info['sha256'] + hex(random.getrandbits(256))[2:]).hexdigest
+	uploadId = hashlib.sha256(file_info['sha256'] + hex(random.getrandbits(256))[2:]).hexdigest()
 	#TODO: Check to make sure these files don't exist (that's a lot of randomness though)
 
 	local_info = {}

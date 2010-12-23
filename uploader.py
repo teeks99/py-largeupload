@@ -60,7 +60,7 @@ class File:
 			status = False
 		return status
 
-	def createCgiChunk(self, c)
+	def createCgiChunk(self, c):
 		chunk = self.file.read(self.chunkSize)
 		chunkSize = self.chunkSize
 		#TODO test chunk len, accpetable to be shorter for last one
@@ -70,7 +70,7 @@ class File:
 		jsHeader = json.dumps(header)
 		return "START_JS" + jsHeader + "END_JS" + chunk
 
-	def unpackChunkResponse(self, response)
+	def unpackChunkResponse(self, response):
 		status = True
 		data = json.loads(response)
 		if not ( (data['status'] == "OK") or (data['status'] == "COMPLETE") ):
