@@ -22,7 +22,7 @@ def chunk_upload():
 
 	uploadId = chunk_data['uploadId']
 
-	p = open("tmp_resource/"+uploadId+".pickle", 'w')
+	p = open("tmp_resource/"+uploadId+".pickle", 'w+')
 	fcntl.lockf(p,fcntl.LOCK_EX)
 
 	local_info = cPickle.load(p)
