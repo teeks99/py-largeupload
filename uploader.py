@@ -6,6 +6,7 @@ class File:
 		self.status = "NOT_STARTED"
 		self.chunks = []
 		self.chunksUploaded = 0
+		self.prefix = ""
 
 	def upload(self, dir_url, local_file):
 		self.status = "PROCESSING_FILE"
@@ -22,19 +23,20 @@ class File:
 		data = self.createJsObject()
 
 		self.status = "CONTACTING_SERVER"
-		response = urllib2.urlopen(self.url_base + 'startUpload.py', data)
+		response = urllib2.urlopen(self.url_base + self.prefix + 'startUpload.py', data)
 		self.status = "PROCESSING_RESPONSE"
 		if not self.unpackJsResponse(response):
 			pass #TODO: Throw exception
 
 		self.status = "UPLOADING"
-		for c in range(self.totalChunks())
+		for c in range(self.totalChunks()):
 			chunk = self.file.read(self.chunkSize)
 			sha256 = hashlib.sha256(chunk).hexdigest()
 			chunks[c] = sha256
 			header = {'uploadId':self.uploadId, 'sequenceNum':c, 'sha256':sha256}
 			jsHeader = json.dumps(header)
-#			response = urllib2.urlopne(self.url_base + 'chunkUpload.py', jsHeader + chunk
+			print jsHeader
+#			response = urllib2.urlopne(self.url_base + self.prefix + 'chunkUpload.py', jsHeader + chunk
 
 	def createJsObject(self):
 		data = {}
@@ -52,7 +54,7 @@ class File:
 		self.chunkSize = data['chunkSize']
 		if not data['echoSha256Sum'] == self.sha256:
 			status = False
-		if not data['status']
+		if not data['status']:
 			status = False
 		return status
 
@@ -64,4 +66,5 @@ class File:
 
 if __name__ == '__main__':
 	f = File()
+	f.prefix = "dh-"
 	f.upload('http://teeks99.com/py-largeupload/','README')
