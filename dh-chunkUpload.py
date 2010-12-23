@@ -2,4 +2,4 @@
 
 import chunkUpload
 
-chunkUpload.start_upload()
+chunkUpload.chunk_upload()

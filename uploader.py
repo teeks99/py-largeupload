@@ -40,7 +40,7 @@ class File:
 				if self.unpackChunkResponse(response.read()) or (try_counter > 10):
 					break # this is a python do-while loop equliavan
 			if verbose:
-				print "Chunk " + str(c) " uploaded"
+				print "Chunk " + str(c) + " uploaded"
 
 	def createJsStart(self):
 		data = {}
@@ -73,6 +73,9 @@ class File:
 		return "START_JS" + jsHeader + "END_JS" + chunk
 
 	def unpackChunkResponse(self, response):
+		print response
+		sys.stdio.flush()
+
 		status = True
 		data = json.loads(response)
 		if not ( (data['status'] == "OK") or (data['status'] == "COMPLETE") ):
