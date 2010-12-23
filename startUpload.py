@@ -1,5 +1,7 @@
 
 import json, sys, fcntl, cPickle
+import cgitb
+cgitb.enable()
 
 # 1MB Chunk
 #chunk_size = 1048576
