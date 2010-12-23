@@ -36,7 +36,7 @@ class File:
 			try_counter = 0
 			while True:
 				try_counter = try_counter + 1
-				response = urllib2.urlopne(self.url_base + self.prefix + 'chunkUpload.py', data)
+				response = urllib2.urlopen(self.url_base + self.prefix + 'chunkUpload.py', data)
 				if self.unpackChunkResponse(response) or (try_counter > 10):
 					break # this is a python do-while loop equliavan
 
