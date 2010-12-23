@@ -4,7 +4,7 @@ import json, os, hashlib, urllib2, sys
 class File:
 	def __init__(self):
 		self.status = "NOT_STARTED"
-		self.chunks = []
+		self.chunkHash = []
 		self.chunksUploaded = 0
 		self.prefix = ""
 
@@ -20,27 +20,27 @@ class File:
 		self.sha256 = hashlib.sha256(self.file.read()).hexdigest()		
 		self.file.seek(0)
 
-		data = self.createJsObject()
+		data = self.createJsStart()
 
 		self.status = "CONTACTING_SERVER"
 		response = urllib2.urlopen(self.url_base + self.prefix + 'startUpload.py', data)
-		print response.read()
-		sys.stdout.flush()
+		resp = response.read()
+		print resp
 		self.status = "PROCESSING_RESPONSE"
-		if not self.unpackJsResponse(response):
+		if not self.unpackJsResponse(resp):
 			pass #TODO: Throw exception
 
 		self.status = "UPLOADING"
 		for c in range(self.totalChunks()):
-			chunk = self.file.read(self.chunkSize)
-			sha256 = hashlib.sha256(chunk).hexdigest()
-			chunks[c] = sha256
-			header = {'uploadId':self.uploadId, 'sequenceNum':c, 'sha256':sha256}
-			jsHeader = json.dumps(header)
-			print jsHeader
-#			response = urllib2.urlopne(self.url_base + self.prefix + 'chunkUpload.py', jsHeader + chunk
+			data = self.createCgiChunk(c)
+			try_counter = 0
+			while True:
+				try_counter = try_counter + 1
+				response = urllib2.urlopne(self.url_base + self.prefix + 'chunkUpload.py', data)
+				if self.unpackChunkResponse(response) or (try_counter > 10):
+					break # this is a python do-while loop equliavan
 
-	def createJsObject(self):
+	def createJsStart(self):
 		data = {}
 		data['filename'] = self.filename #TODO Strip off path
 		data['size'] = self.size
@@ -59,6 +59,22 @@ class File:
 		if not data['status']:
 			status = False
 		return status
+
+	def createCgiChunk(self, c)
+		chunk = self.file.read(self.chunkSize)
+		chunkSize = self.chunkSize
+		#TODO test chunk len, accpetable to be shorter for last one
+		sha256 = hashlib.sha256(chunk).hexdigest()
+		self.chunkHash.append(sha256)
+		header = {'uploadId':self.uploadId, 'sequenceNum':c, 'sha256':sha256, 'chunkSize':chunkSize}
+		jsHeader = json.dumps(header)
+		return "START_JS" + jsHeader + "END_JS" + chunk
+
+	def unpackChunkResponse(self, response)
+		status = True
+		data = json.loads(response)
+		if not ( (data['status'] == "OK") or (data['status'] == "COMPLETE") ):
+			status = False
 
 	def totalChunks(self):
 		chunks = self.size / self.chunkSize

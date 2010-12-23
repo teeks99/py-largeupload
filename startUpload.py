@@ -1,5 +1,5 @@
 
-import json, sys, fcntl, cPickle
+import json, sys, fcntl, cPickle, random, hashlib
 import cgitb
 cgitb.enable()
 
@@ -18,22 +18,32 @@ def start_upload():
 
 	file_info = json.loads(post_data)
 
+	uploadId = hashlib.sha256(file_info['sha256'] + hex(random.getrandbits(256))[2:]).hexdigest
+	#TODO: Check to make sure these files don't exist (that's a lot of randomness though)
+
 	local_info = {}
-	local_info['uploadId'] = file_info['sha256'] #TODO this will cause collisions for identical files...add more to the ID
+	local_info['uploadId'] = uploadId
 	local_info['given_name'] = file_info['filename']
 	local_info['size'] = file_info['size']
 	local_info['sha256'] = file_info['sha256']
 	local_info['chunks_rcvd'] = 0
+	local_info['bytes_rcvd'] = 0
+	local_info['chunks_expected'] = 0
 	local_info['chunk_hash'] = []
+	local_info['complete'] = False
 
-	f = open("tmp_resource/"+file_info['sha256']+".pickle",'w')
-	fcntl.lockf(f,fcntl.LOCK_EX)
-	cPickle.dump(local_info,f)
-	fcntl.lockf(f,fcntl.LOCK_UN)
+	p = open("tmp_resource/"+uploadId+".pickle",'w')
+	fcntl.lockf(p,fcntl.LOCK_EX)
+
+	cPickle.dump(local_info,p)
+	f = open("tmp_file/"+uploadId+".hfile",'wb')
 	f.close()
 
+	fcntl.lockf(p,fcntl.LOCK_UN)
+	p.close()
+
 	output = {}
-	output['uploadId'] = file_info['sha256']
+	output['uploadId'] = uploadId
 	output['echoSha256Sum'] = file_info['sha256']
 	output['chunkSize'] = chunk_size
 	output['status'] = True
