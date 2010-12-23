@@ -9,19 +9,17 @@ cgitb.enable()
 # 1KB Chunk
 chunk_size = 1024
 
-def unpack_header(post_data):
-	data = json.loads(post_data)
-
 def output_json_header():
 	print "Content-Type: application/json"     # HTML is following
 	print                               # blank line, end of headers
 
 def start_upload():
 	post_data = sys.stdin.read()
-	file_info = unpack_header(post_data)
+
+	file_info = json.loads(post_data)
 
 	local_info = {}
-	local_info['uploadId'] = file_info['sha256']
+	local_info['uploadId'] = file_info['sha256'] #TODO this will cause collisions for identical files...add more to the ID
 	local_info['given_name'] = file_info['filename']
 	local_info['size'] = file_info['size']
 	local_info['sha256'] = file_info['sha256']

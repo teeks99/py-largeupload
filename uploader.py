@@ -24,7 +24,7 @@ class File:
 
 		self.status = "CONTACTING_SERVER"
 		response = urllib2.urlopen(self.url_base + self.prefix + 'startUpload.py', data)
-		print response
+		print response.read()
 		sys.stdout.flush()
 		self.status = "PROCESSING_RESPONSE"
 		if not self.unpackJsResponse(response):
