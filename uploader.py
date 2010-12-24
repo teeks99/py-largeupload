@@ -40,7 +40,7 @@ class File:
 				if self.unpackChunkResponse(response.read()) or (try_counter > 10):
 					break # this is a python do-while loop equliavan
 			if verbose:
-				print "Chunk " + str(c) + " uploaded"
+				print "Chunk " + str(c+1) + "/" + self.totalChunks() +" uploaded"
 
 	def createJsStart(self):
 		data = {}

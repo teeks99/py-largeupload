@@ -55,7 +55,7 @@ def chunk_upload():
 
 		local_info['bytes_rcvd'] = local_info['bytes_rcvd'] + len(data)
 		local_info['chunks_rcvd'] = local_info['chunks_rcvd'] + 1
-		local_info['chunk_hash'] = chunk_data['sha256']
+		local_info['chunk_hash'].append(chunk_data['sha256'])
 	
 		if (local_info['chunks_rcvd'] == local_info['chunks_expected']) and (local_info['bytes_rcvd'] == local_info['size']):
 			local_info['complete'] = True

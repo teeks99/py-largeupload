@@ -4,10 +4,10 @@ import cgitb
 cgitb.enable()
 
 # 1MB Chunk
-#chunk_size = 1048576
+chunk_size = 1048576
 
 # 1KB Chunk
-chunk_size = 1024
+#chunk_size = 1024
 
 def output_json_header():
 	print "Content-Type: application/json"     # HTML is following
