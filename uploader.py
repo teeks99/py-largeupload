@@ -77,12 +77,13 @@ class File:
 
 	def unpackChunkResponse(self, response):
 		print response
-		sys.stdio.flush()
+		sys.stdout.flush()
 
 		status = True
 		data = json.loads(response)
 		if not ( (data['status'] == "OK") or (data['status'] == "COMPLETE") ):
 			status = False
+		return status
 
 	def totalChunks(self):
 		chunks = self.size / self.chunkSize
