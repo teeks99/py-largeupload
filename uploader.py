@@ -94,4 +94,4 @@ class File:
 if __name__ == '__main__':
 	f = File()
 	f.prefix = "dh-"
-	f.upload('http://teeks99.com/py-largeupload/','README')
+	f.upload('http://teeks99.com/py-largeupload/','RedEyeExample.jpg')

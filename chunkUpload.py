@@ -33,7 +33,7 @@ def chunk_upload():
 		data = post_data[endPoint+len(end):]
 		if not len(data) == chunk_data['chunkSize']:
 			status = "INVALID_DATA"
-			raise InvalidData("chunk size: " + str(chunk_data['chunkSize']) + " data size: " + len(data))
+			raise InvalidData("chunk size: " + str(chunk_data['chunkSize']) + " data size: " + str(len(data)))
 
 		uploadId = chunk_data['uploadId']
 
@@ -43,7 +43,7 @@ def chunk_upload():
 		local_info = cPickle.load(p)
 		if not local_info['chunks_rcvd'] == chunk_data['sequenceNum']:
 			status = "OUT_OF_ORDER"
-			raise OutOfOrder("Already received: " + local_info['chunks_rcvd'] + " sequence num: " + chunk_data['sequenceNum'])
+			raise OutOfOrder("Already received: " + str(local_info['chunks_rcvd']) + " sequence num: " + str(chunk_data['sequenceNum']))
 
 		if not hashlib.sha256(data).hexdigest() == chunk_data['sha256']:
 			status = "INVALID_DATA"
