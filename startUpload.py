@@ -4,7 +4,10 @@ import cgitb
 cgitb.enable()
 
 # 1MB Chunk
-chunk_size = 1048576
+#chunk_size = 1048576
+
+# 65KB Chunk
+chunk_size = 65535
 
 # 1KB Chunk
 #chunk_size = 1024
