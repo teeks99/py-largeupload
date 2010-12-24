@@ -1,14 +1,15 @@
 
 import json, os, hashlib, urllib2, sys
 
-verbose = True
-
 class File:
 	def __init__(self):
 		self.status = "NOT_STARTED"
 		self.chunkHash = []
 		self.chunksUploaded = 0
+		self.bytesSent = 0
+		self.bytesReceivedRemote = 0
 		self.prefix = ""
+		self.verbose = False
 
 	def upload(self, dir_url, local_file):
 		self.status = "PROCESSING_FILE"
@@ -39,8 +40,11 @@ class File:
 				response = urllib2.urlopen(self.url_base + self.prefix + 'chunkUpload.py', data)
 				if self.unpackChunkResponse(response.read()) or (try_counter > 10):
 					break # this is a python do-while loop equliavan
-			if verbose:
-				print "Chunk " + str(c+1) + "/" + self.totalChunks() +" uploaded"
+			if self.verbose:
+				print "Chunk " + str(c+1) + "/" + str(self.totalChunks()) +" uploaded"
+
+		# This is how other programs can access the file
+		return self.uploadId
 
 	def createJsStart(self):
 		data = {}
@@ -69,6 +73,7 @@ class File:
 		if len(chunk) < chunkSize:
 			if c == self.totalChunks()-1:
 				chunkSize = len(chunk)
+		self.bytesSent = self.bytesSent + chunkSize
 		sha256 = hashlib.sha256(chunk).hexdigest()
 		self.chunkHash.append(sha256)
 		header = {'uploadId':self.uploadId, 'sequenceNum':c, 'sha256':sha256, 'chunkSize':chunkSize}
@@ -81,6 +86,7 @@ class File:
 
 		status = True
 		data = json.loads(response)
+		self.bytesReceivedRemote = data['bytes_rcvd']
 		if not ( (data['status'] == "OK") or (data['status'] == "COMPLETE") ):
 			status = False
 		return status
@@ -94,4 +100,5 @@ class File:
 if __name__ == '__main__':
 	f = File()
 	f.prefix = "dh-"
+	f.verbose = True
 	f.upload('http://teeks99.com/py-largeupload/','RedEyeExample.jpg')
