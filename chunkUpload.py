@@ -33,7 +33,7 @@ def chunk_upload():
 		data = post_data[endPoint+len(end):]
 		if not len(data) == chunk_data['chunkSize']:
 			status = "INVALID_DATA"
-			raise InvalidData("chunk size: " + str(chunk_data['chunkSize']) + " data size: " + str(data))
+			raise InvalidData("chunk size: " + str(chunk_data['chunkSize']) + " data size: " + len(data))
 
 		uploadId = chunk_data['uploadId']
 

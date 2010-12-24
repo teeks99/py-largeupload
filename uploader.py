@@ -65,7 +65,10 @@ class File:
 	def createCgiChunk(self, c):
 		chunk = self.file.read(self.chunkSize)
 		chunkSize = self.chunkSize
-		#TODO test chunk len, accpetable to be shorter for last one
+		# If we're on the last chunk allow it to have a smaller chunk size
+		if len(chunk) < chunkSize:
+			if c == self.totalChunks()-1:
+				chunkSize = len(chunk)
 		sha256 = hashlib.sha256(chunk).hexdigest()
 		self.chunkHash.append(sha256)
 		header = {'uploadId':self.uploadId, 'sequenceNum':c, 'sha256':sha256, 'chunkSize':chunkSize}
