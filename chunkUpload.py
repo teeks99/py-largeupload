@@ -61,6 +61,7 @@ def chunk_upload():
 			local_info['complete'] = True
 			status = "COMPLETE"
 
+		p.seek(0)
 		cPickle.dump(local_info,p)
 		fcntl.lockf(p,fcntl.LOCK_UN)
 		p.close()
