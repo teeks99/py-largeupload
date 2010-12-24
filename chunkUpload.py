@@ -21,6 +21,7 @@ def output_json_header():
 def chunk_upload():
 	status = "OK"
 	fail = ""
+	response = {}
 	try:
 		post_data = sys.stdin.read()
 
@@ -63,14 +64,15 @@ def chunk_upload():
 		cPickle.dump(local_info,p)
 		fcntl.lockf(p,fcntl.LOCK_UN)
 		p.close()
+
+		response['bytes_rcvd'] = local_info['bytes_rcvd']
+
 	except InvalidData as invld:
 		fail = invld.value
 	except OutOfOrder as outofodr:
 		fail = outofodr.value
 
-	response = {}
 	response['status'] = status
-	response['bytes_rcvd'] = local_info['bytes_rcvd']
 	if fail:
 		response['failure'] = fail
 	output_json_header()
